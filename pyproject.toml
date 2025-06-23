@@ -1,0 +1,37 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "oak-mcp"
+version = "0.1.0"
+description = "A model context protocol (MCP) to help agents interact with ontologies and the ontology access kit"
+readme = "README.md"
+authors = [
+    {name = "Justin Reese", email = "justaddcoffee@gmail.com"},
+]
+requires-python = ">=3.11"
+dependencies = [
+    "fastmcp>=2.7.1",
+    "requests>=2.32.4",
+    "oaklib>=0.5.18",
+]
+
+[dependency-groups]
+dev = [
+  "pytest",
+  "black",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/justaddcoffee/oak-mcp"
+"Bug Tracker" = "https://github.com/justaddcoffee/oak-mcp/issues"
+
+[project.scripts]
+oak_mcp = "oak_mcp.main:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/oak_mcp"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
