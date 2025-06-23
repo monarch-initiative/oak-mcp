@@ -2,8 +2,6 @@ from fastmcp import FastMCP
 import urllib
 from typing import List, Tuple, Optional, Dict
 from oaklib import get_adapter
-from pydantic_ai import RunContext
-from pydantic import BaseModel, Field
 
 
 async def search_ontology_with_oak(term: str, ontology: str, n: int = 10, verbose: bool = True) -> List[Tuple[str, str]]:
@@ -67,6 +65,7 @@ async def search_ontology_with_oak(term: str, ontology: str, n: int = 10, verbos
     return results
 
 
+
 def main():
     """Main entry point for the application."""
     mcp.run()
@@ -76,34 +75,5 @@ mcp = FastMCP("oak_mcp")
 
 # Register all tools
 mcp.tool(search_ontology_with_oak)
-
-
-"""Tools for the Knowledge Agent."""
-
-
-class ExtractedEntity(BaseModel):
-    """A single entity extracted from text."""
-    text: str = Field(description="The entity text as found in the source")
-    entity_type: Optional[str] = Field(None, description="The type of entity if known (e.g., 'gene', 'disease', 'phenotype')")
-    context: Optional[str] = Field(None, description="Surrounding context from the original text")
-
-
-class EntityGroundingMatch(BaseModel):
-    """A grounding match for an entity in a specific ontology."""
-    entity: str = Field(description="The original entity text")
-    entity_type: str = Field(description="The entity class from the template (e.g., 'DiseaseTerm', 'PhenotypeTerm')")
-    ontology_id: str = Field(description="The ontology identifier (e.g., 'MONDO:0018923')")
-    ontology_label: str = Field(description="The ontology term label")
-    annotator: str = Field(description="The annotator used (e.g., 'sqlite:obo:mondo')")
-    confidence: str = Field(description="Confidence level: 'high', 'medium', 'low'")
-
-
-class GroundingResults(BaseModel):
-    """Comprehensive grounding results for all entities."""
-    entities_processed: List[str] = Field(description="List of entity texts that were processed")
-    annotators_used: Dict[str, str] = Field(description="Mapping of entity class to annotator string")
-    successful_matches: List[EntityGroundingMatch] = Field(description="All successful ontology matches")
-    no_matches: List[str] = Field(description="Entities that could not be grounded")
-    summary: str = Field(description="Human-readable summary of the grounding results")
 
 
