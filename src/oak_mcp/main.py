@@ -65,7 +65,6 @@ async def search_ontology_with_oak(term: str, ontology: str, n: int = 10, verbos
     return results
 
 
-
 def main():
     """Main entry point for the application."""
     mcp.run()
@@ -76,4 +75,8 @@ mcp = FastMCP("oak_mcp")
 # Register all tools
 mcp.tool(search_ontology_with_oak)
 
+
+if __name__ == "__main__":
+    import asyncio
+    asyncio.run(main())
 
