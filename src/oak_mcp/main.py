@@ -1,9 +1,12 @@
 from fastmcp import FastMCP
 import urllib
-from typing import List, Tuple, Optional, Dict
+from typing import List, Tuple
 from oaklib import get_adapter
 
+mcp = FastMCP("oak_mcp")
 
+# Tool function
+@mcp.tool
 async def search_ontology_with_oak(term: str, ontology: str, n: int = 10, verbose: bool = True) -> List[Tuple[str, str]]:
     """
     Search an OBO ontology for a term.
@@ -53,30 +56,24 @@ async def search_ontology_with_oak(term: str, ontology: str, n: int = 10, verbos
         adapter = get_adapter(ontology)
         results = adapter.basic_search(term)
         results = list(adapter.labels(results))
-    except ValueError or urllib.error.URLError as e:  # in case the ontology is not found or cannot be accessed
+    except (ValueError, urllib.error.URLError) as e:
         print(f"## TOOL WARNING: Unable to search ontology '{ontology}' - {str(e)}")
-        return None
+        return []
+
     if n:
-        results = list(results)[:n]
+        results = results[:n]
 
     if verbose:
         print(f"## TOOL USE: Searched for '{term}' in '{ontology}' ontology")
         print(f"## RESULTS: {results}")
     return results
 
-
-def main():
-    """Main entry point for the application."""
-    mcp.run()
-
-
-mcp = FastMCP("oak_mcp")
-
-# Register all tools
-mcp.tool(search_ontology_with_oak)
-
+# Main entrypoint
+async def main():
+    print("== Starting oak_mcp FastMCP server ==")
+    # Call run_async directly to avoid nesting anyio.run()
+    await mcp.run_async("stdio")
 
 if __name__ == "__main__":
     import asyncio
     asyncio.run(main())
-
