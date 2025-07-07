@@ -27,11 +27,5 @@ jobs:
     - name: Install dependencies
       run: uv sync
 
-    - name: Run quality checks
-      run: uv run --frozen make qc
-
-    - name: Test MCP server startup
-      run: |
-        timeout 3 uv run python src/oak_mcp/main.py &
-        sleep 1
-        kill %1 || true
+    - name: Run all checks
+      run: make all
