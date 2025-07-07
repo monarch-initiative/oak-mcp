@@ -4,7 +4,7 @@
 
 # Installation
 install:
-	uv sync
+	uv sync  # Install dependencies from uv.lock and pyproject.toml
 
 # Code quality
 format:
