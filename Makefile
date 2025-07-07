@@ -24,7 +24,7 @@
 # Goose setup:
 #   goose session --with-extension "uv run python src/oak_mcp/main.py"
 
-.PHONY: clean check-deps dev dev-install format format-check install lint qc run-server test test-mcp test-mcp-extended typecheck
+.PHONY: build clean check-deps dev dev-install format format-check install lint publish-test publish qc run-server test test-mcp test-mcp-extended typecheck
 
 # Installation
 install:
@@ -32,6 +32,17 @@ install:
 
 dev-install: install
 	uv pip install -e .
+
+# Build
+build:
+	uv build
+
+# Publishing
+publish-test: clean build
+	uv publish --publish-url https://test.pypi.org/legacy/
+
+publish: clean build
+	uv publish
 
 # Code quality
 format:
