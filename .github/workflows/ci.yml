@@ -1,13 +1,14 @@
-name: CI
+name: Test and Install Package
 
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  quality:
+  build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -15,17 +16,21 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
 
     - name: Install uv
       uses: astral-sh/setup-uv@v4
       with:
         version: "latest"
 
-    - name: Set up Python ${{ matrix.python-version }}
-      run: uv python install ${{ matrix.python-version }}
-
     - name: Install dependencies
-      run: uv sync
+      run: uv sync --group dev
 
-    - name: Run all checks
+    - name: Build and test
       run: make all

@@ -1,6 +1,6 @@
-from fastmcp import FastMCP
 import urllib
-from typing import List, Tuple
+
+from fastmcp import FastMCP
 from oaklib import get_adapter
 
 mcp: FastMCP = FastMCP("oak_mcp")
@@ -10,25 +10,27 @@ mcp: FastMCP = FastMCP("oak_mcp")
 @mcp.tool
 async def search_ontology_with_oak(
     term: str, ontology: str, n: int = 10, verbose: bool = True
-) -> List[Tuple[str, str]]:
+) -> list[tuple[str, str]]:
     """
     Search an OBO ontology for a term.
 
     Note that search should take into account synonyms, but synonyms may be incomplete,
-    so if you cannot find a concept of interest, try searching using related or synonymous
-    terms. For example, if you do not find a term for 'eye defect' in the Human Phenotype Ontology,
+    so if you cannot find a concept of interest, try searching using related or
+    synonymous terms. For example, if you do not find a term for 'eye defect' in
+    the Human Phenotype Ontology,
     try searching for "abnormality of eye" and also try searching for "eye" and then
     looking through the results to find the more specific term you are interested in.
 
     Also remember to check for upper and lower case variations of the term.
 
-    If you are searching for a composite term, try searching on the sub-terms to get a sense
-    of the terminology used in the ontology.
+    If you are searching for a composite term, try searching on the sub-terms to
+    get a sense of the terminology used in the ontology.
 
     Args:
         term: The term to search for.
-        ontology: The ontology ID to search. You can try prepending "ols:" to an ontology
-        name to use the ontology lookup service (OLS), for example "ols:mondo" or
+        ontology: The ontology ID to search. You can try prepending "ols:" to an
+        ontology name to use the ontology lookup service (OLS), for example
+        "ols:mondo" or
         "ols:hp". Try first using "ols:". You can also try prepending "sqlite:obo:" to
         an ontology name to use the local sqlite version of ontologies, but
         **you should prefer "ols:" because it seems to do better for finding
