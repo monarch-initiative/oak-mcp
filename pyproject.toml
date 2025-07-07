@@ -1,10 +1,10 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
 name = "oak-mcp"
-version = "0.1.11"
+dynamic = ["version"]
 description = "A model context protocol (MCP) to help agents interact with ontologies and the ontology access kit"
 readme = "README.md"
 authors = [
@@ -37,6 +37,9 @@ oak-mcp = "oak_mcp.main:cli"
 [tool.hatch.build.targets.wheel]
 packages = ["src/oak_mcp"]
 
+[tool.hatch.version]
+source = "vcs"
+write = { version-file = "src/oak_mcp/_version.py" }
 [tool.hatch.build]
 include = ["src/oak_mcp/**/*"]
 
