@@ -12,6 +12,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Need full git history for version detection
 
     - name: Install uv
       uses: astral-sh/setup-uv@v4
@@ -19,13 +21,6 @@ jobs:
     - name: Set up Python
       run: uv python install 3.11
 
-    - name: Cache Python dependencies
-      uses: actions/cache@v3
-      with:
-        path: .venv
-        key: ${{ runner.os }}-python-${{ hashFiles('**/requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-python-
     - name: Install dependencies
       run: uv sync
 
@@ -35,21 +30,25 @@ jobs:
     - name: Build package
       run: uv build
 
-    # Debug step: Check what was built
-    - name: List built files
+    - name: Check version
       run: |
-        ls -la dist/
-        python -m zipfile -l dist/*.whl
-        
-    # Debug step: Check metadata
-    - name: Check wheel metadata
-      run: |
-        python -m zipfile -e dist/*.whl temp_check/
-        find temp_check/ -name "METADATA" -exec cat {} \;
+        echo "Built version:"
+        ls dist/
+        # Verify we have a clean release version (no .dev or +local)
+        python -c "
+        import glob
+        files = glob.glob('dist/*.whl')
+        if files:
+            filename = files[0]
+            if '.dev' in filename or '+' in filename:
+                print(f'ERROR: Development version detected: {filename}')
+                exit(1)
+            else:
+                print(f'✓ Clean release version: {filename}')
+        "
 
     - name: Publish to PyPI
-      uses: pypa/gh-action-pypi-publish@release/v1
+      uses: pypa/gh-action-pypi-publish@v1.10.3
       with:
         verbose: true
         password: ${{ secrets.PYPI_API_TOKEN }}
-
