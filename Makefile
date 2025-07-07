@@ -24,7 +24,7 @@ test-mcp:
 	echo '{"jsonrpc": "2.0", "method": "initialize", "params": {"protocolVersion": "1.0", "capabilities": {"tools": {}}, "clientInfo": {"name": "test-client", "version": "1.0.0"}}, "id": 1}' | timeout 3 uv run python src/oak_mcp/main.py 2>/dev/null | head -1
 
 # Development workflow
-dev: clean install dev-install test
+dev: clean dev-install test
 
 clean:
 	rm -rf build/
