@@ -7,9 +7,7 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    environment: release
     permissions:
-      id-token: write
       contents: read
 
     steps:
@@ -53,3 +51,5 @@ jobs:
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         verbose: true
+        password: ${{ secrets.PYPI_API_TOKEN }}
+        password: ${{ secrets.PYPI_API_TOKEN }}
