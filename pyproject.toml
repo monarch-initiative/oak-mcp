@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "oak-mcp"
-version = "0.1.5"
+version = "0.1.6"
 description = "A model context protocol (MCP) to help agents interact with ontologies and the ontology access kit"
 readme = "README.md"
 authors = [
@@ -27,14 +27,17 @@ dev = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/justaddcoffee/oak-mcp"
-"Bug Tracker" = "https://github.com/justaddcoffee/oak-mcp/issues"
+"Homepage" = "https://github.com/monarch-initiative/oak-mcp"
+"Bug Tracker" = "https://github.com/monarch-initiative/oak-mcp/issues"
 
 [project.scripts]
 oak_mcp = "oak_mcp.main:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/oak_mcp"]
+
+[tool.hatch.build]
+include = ["src/oak_mcp/**/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
