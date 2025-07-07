@@ -144,23 +144,25 @@ async def test_precision_medical_terminology():
     for term_id, _ontology_id, label in specific_results:
         print(f"  • {term_id}: {label}")
 
-    if specific_results:
-        labels = [result[2] for result in specific_results]
-        # Should find relevant cardiac septal terms
-        cardiac_terms = [
-            label
-            for label in labels
-            if any(
-                keyword in label.lower()
-                for keyword in ["septal", "ventricular", "heart"]
-            )
-        ]
-        print(f"📊 Found {len(cardiac_terms)} cardiac-specific terms")
+    # Assert we get results or mark as expected failure
+    assert specific_results, "Should find results for specific cardiac terminology"
+    
+    labels = [result[2] for result in specific_results]
+    # Should find relevant cardiac septal terms
+    cardiac_terms = [
+        label
+        for label in labels
+        if any(
+            keyword in label.lower()
+            for keyword in ["septal", "ventricular", "heart"]
+        )
+    ]
+    print(f"📊 Found {len(cardiac_terms)} cardiac-specific terms")
 
-        # This demonstrates:
-        # - Precise terminology matching
-        # - Clinical specificity
-        # - Support for detailed medical reasoning
+    # This demonstrates:
+    # - Precise terminology matching
+    # - Clinical specificity
+    # - Support for detailed medical reasoning
 
 
 @pytest.mark.asyncio
@@ -184,13 +186,15 @@ async def test_agent_guidance_different_ontologies():
     print(f"🫀 Anatomy terms: {[r[2] for r in anatomy_results]}")
 
     # Verify ontology-specific results
-    if hp_results and mondo_results:
-        hp_term_ids = [result[0] for result in hp_results]
-        mondo_term_ids = [result[0] for result in mondo_results]
+    assert hp_results, "Should find HP (phenotype) results for heart terms"
+    assert mondo_results, "Should find MONDO (disease) results for heart terms"
+    
+    hp_term_ids = [result[0] for result in hp_results]
+    mondo_term_ids = [result[0] for result in mondo_results]
 
-        # Verify different ontology namespaces
-        assert any("HP:" in term_id for term_id in hp_term_ids)
-        assert any("MONDO:" in term_id for term_id in mondo_term_ids)
+    # Verify different ontology namespaces
+    assert any("HP:" in term_id for term_id in hp_term_ids)
+    assert any("MONDO:" in term_id for term_id in mondo_term_ids)
 
         print("\n✅ Agent Guidance Benefits:")
         print("  • HP: Find patient phenotypes and symptoms")

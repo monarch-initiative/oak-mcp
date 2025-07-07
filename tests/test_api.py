@@ -104,7 +104,7 @@ async def test_search_cross_ontology_brain() -> None:
 
     # Should find terms from anatomy (UBERON) and disease (MONDO) ontologies
     unique_ontologies = set(ontology_ids)
-    assert len(unique_ontologies) >= 1  # At least one ontology
+    assert len(unique_ontologies) >= 2  # At least two ontologies to validate cross-ontology behavior
 
 
 @pytest.mark.asyncio
