@@ -24,7 +24,10 @@
 # Goose setup:
 #   goose session --with-extension "uv run python src/oak_mcp/main.py"
 
-.PHONY: build clean check-deps dev dev-install format format-check install lint publish-test publish qc run-server test test-mcp test-mcp-extended typecheck
+.PHONY: all build clean check-deps dev dev-install format format-check install lint publish-test publish qc run-server test test-mcp test-mcp-extended typecheck
+
+# Default target - everything except publishing
+all: qc build test-mcp
 
 # Installation
 install:
