@@ -3,11 +3,14 @@ import urllib
 from typing import List, Tuple
 from oaklib import get_adapter
 
-mcp = FastMCP("oak_mcp")
+mcp: FastMCP = FastMCP("oak_mcp")
+
 
 # Tool function
 @mcp.tool
-async def search_ontology_with_oak(term: str, ontology: str, n: int = 10, verbose: bool = True) -> List[Tuple[str, str]]:
+async def search_ontology_with_oak(
+    term: str, ontology: str, n: int = 10, verbose: bool = True
+) -> List[Tuple[str, str]]:
     """
     Search an OBO ontology for a term.
 
@@ -68,12 +71,15 @@ async def search_ontology_with_oak(term: str, ontology: str, n: int = 10, verbos
         print(f"## RESULTS: {results}")
     return results
 
+
 # Main entrypoint
-async def main():
+async def main() -> None:
     print("== Starting oak_mcp FastMCP server ==")
     # Call run_async directly to avoid nesting anyio.run()
     await mcp.run_async("stdio")
 
+
 if __name__ == "__main__":
     import asyncio
+
     asyncio.run(main())
