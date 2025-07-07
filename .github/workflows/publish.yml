@@ -39,9 +39,10 @@ jobs:
     - name: Build package
       run: uv build
 
+    - name: Create virtual environment for PyPA action
+      run: uv venv .venv
+
     - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@v1.10.3
       with:
         packages_dir: dist/
-        skip_existing: true
-        verbose: true
