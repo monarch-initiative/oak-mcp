@@ -38,4 +38,4 @@ jobs:
     - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@v1.10.3
       with:
-        packages_dir: dist/
+        packages-dir: dist/
