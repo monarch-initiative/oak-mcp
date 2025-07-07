@@ -18,20 +18,11 @@ make test
 ## Installation
 
 ```bash
-# Install dependencies
-make install
-
-# Install in development mode
+# Install in development mode (includes dependencies)
 make dev-install
 ```
 
 ## Usage
-
-### Running the MCP Server
-
-```bash
-make run-server
-```
 
 ### Testing MCP Protocol
 
