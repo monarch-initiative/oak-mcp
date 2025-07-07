@@ -37,5 +37,19 @@ jobs:
     - name: Build package
       run: uv build
 
+    # Debug step: Check what was built
+    - name: List built files
+      run: |
+        ls -la dist/
+        python -m zipfile -l dist/*.whl
+        
+    # Debug step: Check metadata
+    - name: Check wheel metadata
+      run: |
+        python -m zipfile -e dist/*.whl temp_check/
+        find temp_check/ -name "METADATA" -exec cat {} \;
+
     - name: Publish to PyPI
-      uses: pypa/gh-action-pypi-publish@v1.10.3
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        verbose: true
