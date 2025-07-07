@@ -2,50 +2,79 @@
 
 A model context protocol (MCP) to help agents interact with ontologies and the ontology access kit
 
-## Installation
-
-You can install the package from source:
+## Quick Start
 
 ```bash
-pip install -e .
+# Install dependencies and set up development environment
+make dev
+
+# Run the MCP server
+make run-server
+
+# Run tests
+make test
 ```
 
-Or using uv:
+## Installation
 
 ```bash
-uv pip install -e .
+# Install in development mode (includes dependencies)
+make dev-install
 ```
 
 ## Usage
 
-You can use the CLI:
+### Testing MCP Protocol
 
 ```bash
-oak-mcp
+make test-mcp
 ```
 
-Or import in your Python code:
+### Integration with AI Tools
 
-```python
-from oak_mcp.main import create_mcp
+#### Claude Desktop
 
-mcp = create_mcp()
-mcp.run()
+Add this to your Claude Desktop configuration file:
+
+```json
+{
+  "mcpServers": {
+    "oak-mcp": {
+      "command": "uv",
+      "args": ["run", "python", "src/oak_mcp/main.py"],
+      "cwd": "/path/to/oak-mcp"
+    }
+  }
+}
+```
+
+#### Claude Code
+
+```bash
+claude mcp add -s project oak-mcp uv run python src/oak_mcp/main.py
+```
+
+#### Goose
+
+```bash
+goose session --with-extension "uv run python src/oak_mcp/main.py"
 ```
 
 ## Development
 
-### Local Setup
-
 ```bash
-# Clone the repository
-git clone https://github.com/justaddcoffee/oak-mcp.git
-cd oak-mcp
+# Full development setup
+make dev
 
-# Install development dependencies
-uv pip install -e ".[dev]"
+# Run tests
+make test
+
+# Check dependencies
+make check-deps
+
+# Clean build artifacts
+make clean
 ```
-
 
 ## License
 
