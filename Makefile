@@ -1,4 +1,3 @@
-
 # OAK MCP - Makefile for development and testing
 #
 # Manual setup without make:
@@ -25,7 +24,7 @@
 # Goose setup:
 #   goose session --with-extension "uv run python src/oak_mcp/main.py"
 
-.PHONY: install test clean dev-install run-server check-deps dev test-mcp test-mcp-extended
+.PHONY: install test clean dev-install run-server check-deps dev test-mcp test-mcp-extended format format-check lint typecheck qc
 
 # Installation
 install:
@@ -33,15 +32,6 @@ install:
 
 dev-install: install
 	uv pip install -e .
-
-
-# OAK MCP - Code quality and development
-
-.PHONY: install format lint typecheck test run-server qc
-
-# Installation
-install:
-	uv sync  # Install dependencies from uv.lock and pyproject.toml
 
 # Code quality
 format:
@@ -56,11 +46,9 @@ lint:
 typecheck:
 	uv run mypy src/ tests/
 
-
 # Testing
 test:
 	uv run pytest tests/ -v
-
 
 check-deps:
 	uv tree
@@ -91,10 +79,5 @@ clean:
 	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
 	find . -type f -name "*.pyc" -delete 2>/dev/null || true
 
-# Run the MCP server
-run-server:
-	uv run python src/oak_mcp/main.py
-
 # Run all quality checks
 qc: format lint typecheck test
-
