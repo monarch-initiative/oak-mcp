@@ -56,7 +56,7 @@ test-mcp-extended:
 	timeout 5 uv run python src/oak_mcp/main.py 2>/dev/null | head -10
 
 # Development workflow
-dev: clean install dev-install test
+dev: clean dev-install test
 
 clean:
 	rm -rf build/
