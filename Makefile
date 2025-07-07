@@ -24,7 +24,7 @@
 # Goose setup:
 #   goose session --with-extension "uv run python src/oak_mcp/main.py"
 
-.PHONY: install test clean dev-install run-server check-deps dev test-mcp-extended
+.PHONY: install test clean dev-install run-server check-deps dev test-mcp test-mcp-extended
 
 # Installation
 install:
