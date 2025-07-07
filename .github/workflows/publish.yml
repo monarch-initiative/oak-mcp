@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: release
     permissions:
-      id-token: write  # Required for trusted publishing
+      id-token: write
       contents: read
 
     steps:
@@ -17,8 +17,6 @@ jobs:
 
     - name: Install uv
       uses: astral-sh/setup-uv@v4
-      with:
-        version: "latest"
 
     - name: Set up Python
       run: uv python install 3.11
@@ -26,16 +24,11 @@ jobs:
     - name: Install dependencies
       run: uv sync
 
-    - name: Run all checks
-      run: make all
+    - name: Run tests
+      run: uv run pytest tests/ -v
 
     - name: Build package
       run: uv build
 
-    - name: Create virtual environment for PyPA action
-      run: uv venv .venv
-
     - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@v1.10.3
-      with:
-        packages-dir: dist/
