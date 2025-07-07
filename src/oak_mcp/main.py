@@ -48,11 +48,12 @@ async def search_ontology_with_oak(
             - "ols:ncit" — terms related to clinical research from the NCI Thesaurus
             - "ols:snomed" - SNOMED CT terms for clinical concepts. This includes
             LOINC, if you need to search for clinical measurements/tests
-        n: The maximum number of results to return.
-        verbose: Whether to print debug information.
+        n: The maximum number of results to return (default: 10).
+        verbose: Whether to print debug information (default: True).
 
     Returns:
-        A list of tuples, each containing an ontology ID and a label.
+        A list of tuples, each containing an ontology ID and a label. Returns empty list
+        if the ontology cannot be accessed or search fails.
     """
     # try / except
     try:
