@@ -17,6 +17,15 @@ make test
 
 ## Installation
 
+### Using uvx (Recommended)
+
+```bash
+# Install and run directly with uvx
+uvx oak-mcp
+```
+
+### Development Installation
+
 ```bash
 # Install in development mode (includes dependencies)
 make dev-install
@@ -40,9 +49,12 @@ Add this to your Claude Desktop configuration file:
 {
   "mcpServers": {
     "oak-mcp": {
-      "command": "uv",
-      "args": ["run", "python", "src/oak_mcp/main.py"],
-      "cwd": "/path/to/oak-mcp"
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "oak-mcp"
+      ],
+      "env": {}
     }
   }
 }
@@ -51,13 +63,13 @@ Add this to your Claude Desktop configuration file:
 #### Claude Code
 
 ```bash
-claude mcp add -s project oak-mcp uv run python src/oak_mcp/main.py
+claude mcp add oak-mcp uvx oak-mcp
 ```
 
 #### Goose
 
 ```bash
-goose session --with-extension "uv run python src/oak_mcp/main.py"
+goose session --with-extension "uvx oak-mcp"
 ```
 
 ## Development
