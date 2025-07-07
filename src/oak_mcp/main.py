@@ -83,6 +83,7 @@ async def main() -> None:
 def cli() -> None:
     """CLI entry point that properly handles the async main function."""
     import asyncio
+
     asyncio.run(main())
 
 
