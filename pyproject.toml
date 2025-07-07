@@ -32,7 +32,7 @@ dev = [
 "Bug Tracker" = "https://github.com/monarch-initiative/oak-mcp/issues"
 
 [project.scripts]
-oak_mcp = "oak_mcp.main:main"
+oak_mcp = "oak_mcp.main:cli"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/oak_mcp"]

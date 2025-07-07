@@ -80,7 +80,11 @@ async def main() -> None:
     await mcp.run_async("stdio")
 
 
-if __name__ == "__main__":
+def cli() -> None:
+    """CLI entry point that properly handles the async main function."""
     import asyncio
-
     asyncio.run(main())
+
+
+if __name__ == "__main__":
+    cli()
