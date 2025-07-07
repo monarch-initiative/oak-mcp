@@ -4,11 +4,12 @@ build-backend = "hatchling.build"
 
 [project]
 name = "oak-mcp"
-version = "0.1.6"
+version = "0.1.7"
 description = "A model context protocol (MCP) to help agents interact with ontologies and the ontology access kit"
 readme = "README.md"
 authors = [
     {name = "Justin Reese", email = "justaddcoffee@gmail.com"},
+    {name = "Mark Andrew Miller", email = "MAM@lbl.gov"},
 ]
 requires-python = ">=3.11"
 dependencies = [
