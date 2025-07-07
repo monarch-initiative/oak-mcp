@@ -1,7 +1,7 @@
-.PHONY: test-coverage clean install dev format lint all server build upload-test upload release deptry mypy test-mcp test-mcp-extended test-real-world-integration
+.PHONY: test-coverage clean install dev format lint all server build upload-test upload release deptry mypy test-mcp test-mcp-extended test-medical-integration test-real-world-integration
 
 # Default target
-all: clean install dev test-coverage format lint mypy deptry build test-medical-integration test-real-world-integration
+all: clean install dev test-coverage format lint mypy deptry build test-mcp test-mcp-extended test-medical-integration test-real-world-integration
 
 # Install everything for development
 dev:

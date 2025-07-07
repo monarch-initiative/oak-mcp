@@ -117,16 +117,15 @@ async def test_search_specific_medical_terms() -> None:
     # Test ventricular septal defect - a specific heart condition
     results = await search_func("ventricular septal defect", ontology_id="hp", n=3)
 
-    if results:  # OLS might not always have exact matches
-        labels = [result[2] for result in results]
-        # Should find relevant cardiac septal terms
-        assert any(
-            any(
-                keyword in label.lower()
-                for keyword in ["septal", "ventricular", "heart"]
-            )
-            for label in labels
-        )
+    # Assert we get results to ensure test validation
+    assert results, "Should find results for ventricular septal defect search"
+
+    labels = [result[2] for result in results]
+    # Should find relevant cardiac septal terms
+    assert any(
+        any(keyword in label.lower() for keyword in ["septal", "ventricular", "heart"])
+        for label in labels
+    )
 
 
 @pytest.mark.asyncio
@@ -144,11 +143,10 @@ async def test_search_invalid_ontology() -> None:
 @pytest.mark.asyncio
 async def test_get_term_details_useful() -> None:
     """Test get_term_details with a real medical term."""
-    search_func = search.fn
     details_func = get_term_details.fn
 
     # First search for diabetes to get a real term
-    search_results = await search_func("diabetes", ontology_id="mondo", n=1)
+    search_results = await search.fn("diabetes", ontology_id="mondo", n=1)
 
     if search_results:
         term_id = search_results[0][0]

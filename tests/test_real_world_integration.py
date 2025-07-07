@@ -157,6 +157,7 @@ async def test_precision_medical_terminology():
         )
     ]
     print(f"📊 Found {len(cardiac_terms)} cardiac-specific terms")
+    assert cardiac_terms, "Expected to find cardiac-specific terms"
 
     # This demonstrates:
     # - Precise terminology matching
@@ -183,6 +184,7 @@ async def test_agent_guidance_different_ontologies():
     # Anatomy (search for uberon-like terms)
     anatomy_results = await search.fn("heart anatomy", None, 3)
     print(f"🫀 Anatomy terms: {[r[2] for r in anatomy_results]}")
+    assert anatomy_results, "Should find anatomy results for heart terms"
 
     # Verify ontology-specific results
     assert hp_results, "Should find HP (phenotype) results for heart terms"
