@@ -1,4 +1,4 @@
-.PHONY: test-coverage clean install dev format lint all server build upload-test upload release deptry mypy test-mcp test-mcp-extended
+.PHONY: test-coverage clean install dev format lint all server build upload-test upload release deptry mypy test-mcp test-mcp-extended test-real-world-integration
 
 # Default target
 all: clean install dev test-coverage format lint mypy deptry build test-medical-integration test-real-world-integration
@@ -62,6 +62,10 @@ release: clean test-coverage build upload
 test-medical-integration:
 	@echo "🔬 Testing medical AI integration..."
 	uv run pytest tests/test_real_world_integration.py::test_diabetes_research_workflow -v -s
+
+test-real-world-integration:
+	@echo "🌍 Testing real-world integration..."
+	uv run pytest tests/test_real_world_integration.py -v
 
 test-cardiac-phenotypes:
 	@echo "❤️ Testing cardiac phenotype discovery..."
