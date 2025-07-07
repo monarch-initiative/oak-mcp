@@ -6,73 +6,127 @@ from oaklib import get_adapter
 mcp: FastMCP = FastMCP("oak_mcp")
 
 
-# Tool function
 @mcp.tool
-async def search_ontology_with_oak(
-    term: str, ontology: str, n: int = 10, verbose: bool = True
-) -> list[tuple[str, str]]:
+async def search(
+    search_term: str, ontology_id: str | None = None, n: int = 10
+) -> list[tuple[str, str, str]]:
     """
-    Search an OBO ontology for a term.
+    Search OLS for ontology terms.
 
-    Note that search should take into account synonyms, but synonyms may be incomplete,
-    so if you cannot find a concept of interest, try searching using related or
-    synonymous terms. For example, if you do not find a term for 'eye defect' in
-    the Human Phenotype Ontology,
-    try searching for "abnormality of eye" and also try searching for "eye" and then
-    looking through the results to find the more specific term you are interested in.
+    The search_term should be a plain text term that is matched against the ontology
+    term label, synonyms, and other text metadata. Relevancy ranking is used - exact
+    matches are given priority, but rank is determined by the number of words
+    that match.
 
-    Also remember to check for upper and lower case variations of the term.
+    The ontology_id should be the OBO id for the ontology, this generally
+    corresponds to the ID space. For example, the Human Phenotype Ontology should
+    use `hp` (not `hpo`). This can be left blank if you are not sure which ontology
+    to explore (you can use the results to refine your search).
 
-    If you are searching for a composite term, try searching on the sub-terms to
-    get a sense of the terminology used in the ontology.
+    Common ontology IDs:
+        - hp: Human Phenotype Ontology (phenotypes, clinical features)
+        - mondo: Disease ontology
+        - go: Gene Ontology (molecular functions, biological processes,
+          cellular components)
+        - chebi: Chemical Entities of Biological Interest
+        - uberon: Anatomical structures
+        - cl: Cell types
+        - ncit: NCI Thesaurus (clinical research terms)
 
     Args:
-        term: The term to search for.
-        ontology: The ontology ID to search. You can try prepending "ols:" to an
-        ontology name to use the ontology lookup service (OLS), for example
-        "ols:mondo" or
-        "ols:hp". Try first using "ols:". You can also try prepending "sqlite:obo:" to
-        an ontology name to use the local sqlite version of ontologies, but
-        **you should prefer "ols:" because it seems to do better for finding
-        non-exact matches!**
-
-        Recommended ontologies for common biomedical concepts:
-            - "ols:mondo" — diseases from the MONDO disease ontology
-            - "sqlite:obo:hgnc" — human gene symbols from HGNC
-            - "ols:hp" — phenotypic features from the Human Phenotype Ontology
-            - "ols:go" — molecular functions, biological processes, and cellular
-            components from the Gene Ontology
-            - "ols:chebi" — chemical entities from the ChEBI ontology
-            - "ols:uberon" — anatomical structures from the Uberon ontology
-            - "ols:cl" — cell types from the Cell Ontology
-            - "ols:so" — sequence features from the Sequence Ontology
-            - "ols:pr" — protein entities from the Protein Ontology (PRO)
-            - "ols:ncit" — terms related to clinical research from the NCI Thesaurus
-            - "ols:snomed" - SNOMED CT terms for clinical concepts. This includes
-            LOINC, if you need to search for clinical measurements/tests
-        n: The maximum number of results to return (default: 10).
-        verbose: Whether to print debug information (default: True).
+        search_term: Plain text search term
+        ontology_id: OBO ontology ID (e.g., 'hp', 'mondo', 'go'). Leave None
+          to search across ontologies.
+        n: Maximum number of results to return (default: 10)
 
     Returns:
-        A list of tuples, each containing an ontology ID and a label. Returns empty list
-        if the ontology cannot be accessed or search fails.
+        List of tuples containing (term_id, ontology_id, label)
     """
-    # try / except
     try:
-        adapter = get_adapter(ontology)
-        results = adapter.basic_search(term)
+        if ontology_id:
+            # Search specific ontology using OLS
+            ontology_selector = f"ols:{ontology_id}"
+        else:
+            # Search across OLS without specifying ontology
+            ontology_selector = "ols:"
+
+        adapter = get_adapter(ontology_selector)
+        results = adapter.basic_search(search_term)
         results = list(adapter.labels(results))
+
+        if n:
+            results = results[:n]
+
+        # Convert results to the expected format: (term_id, ontology_id, label)
+        formatted_results = []
+        for term_id, label in results:
+            # Extract ontology ID from term_id (e.g., "HP:0000001" -> "hp")
+            if ":" in term_id:
+                extracted_ontology_id = term_id.split(":")[0].lower()
+            else:
+                extracted_ontology_id = ontology_id or "unknown"
+            formatted_results.append((term_id, extracted_ontology_id, label))
+
+        return formatted_results
+
     except (ValueError, urllib.error.URLError) as e:
-        print(f"## TOOL WARNING: Unable to search ontology '{ontology}' - {str(e)}")
+        print(f"## TOOL WARNING: Unable to search ontology - {str(e)}")
         return []
 
-    if n:
-        results = results[:n]
 
-    if verbose:
-        print(f"## TOOL USE: Searched for '{term}' in '{ontology}' ontology")
-        print(f"## RESULTS: {results}")
-    return results
+@mcp.tool
+async def get_term_details(term_id: str) -> dict:
+    """
+    Get detailed information about a specific ontology term including synonyms.
+
+    This helps understand why a term matched in search results by showing
+    all synonyms and alternative labels.
+
+    Args:
+        term_id: The ontology term ID (e.g., "HP:0000001", "MONDO:0005148")
+
+    Returns:
+        Dictionary containing term details including synonyms
+    """
+    try:
+        # Extract ontology prefix and use OLS
+        if ":" in term_id:
+            ontology_prefix = term_id.split(":")[0].lower()
+            ontology_selector = f"ols:{ontology_prefix}"
+        else:
+            ontology_selector = "ols:"
+
+        adapter = get_adapter(ontology_selector)
+
+        # Get basic term information
+        label = adapter.label(term_id)
+        definition = adapter.definition(term_id)
+
+        # Check if term exists (if label is None, the term probably doesn't exist)
+        if label is None:
+            return {"error": f"Term '{term_id}' not found or does not exist"}
+
+        # Get synonyms - OLS doesn't support entity_aliases, so we'll try
+        # alternative methods
+        synonyms = []
+        try:
+            # Try to get synonyms if the adapter supports it
+            synonyms = list(adapter.entity_aliases(term_id))
+        except (NotImplementedError, AttributeError):
+            # OLS adapter doesn't support this, return empty list for now
+            synonyms = []
+
+        return {
+            "term_id": term_id,
+            "label": label,
+            "definition": definition,
+            "synonyms": synonyms,
+            "ontology_id": ontology_prefix if ":" in term_id else "unknown",
+        }
+
+    except (ValueError, urllib.error.URLError) as e:
+        print(f"## TOOL WARNING: Unable to get term details for '{term_id}' - {str(e)}")
+        return {"error": str(e)}
 
 
 # Main entrypoint
