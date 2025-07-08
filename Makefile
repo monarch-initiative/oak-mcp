@@ -110,15 +110,18 @@ test-mcp-extended:
 #   {
 #     "mcpServers": {
 #       "oak-mcp": {
-#         "command": "uv",
-#         "args": ["run", "python", "src/oak_mcp/main.py"],
-#         "cwd": "/path/to/oak-mcp"
+#         "type": "stdio",
+#         "command": "uvx",
+#         "args": [
+#           "oak-mcp"
+#         ],
+#         "env": {}
 #       }
 #     }
 #   }
 #
 # Claude Code MCP setup:
-#   claude mcp add -s project oak-mcp uv run python src/oak_mcp/main.py
+#   claude mcp add oak-mcp uvx oak-mcp
 #
 # Goose setup:
-#   goose session --with-extension "uv run python src/oak_mcp/main.py"
+#   goose session --with-extension "uvx oak-mcp"
