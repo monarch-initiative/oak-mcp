@@ -1,7 +1,7 @@
-.PHONY: test-coverage clean install dev format lint all server build upload-test upload release deptry mypy test-mcp test-mcp-extended
+.PHONY: test-coverage clean install dev format lint all server build upload-test upload release deptry mypy test-mcp test-mcp-extended test-medical-integration test-real-world-integration
 
 # Default target
-all: clean install dev test-coverage format lint mypy deptry build test-mcp test-mcp-extended
+all: clean install dev test-coverage format lint mypy deptry build test-mcp test-mcp-extended test-medical-integration test-real-world-integration
 
 # Install everything for development
 dev:
@@ -57,6 +57,39 @@ upload:
 
 # Complete release workflow
 release: clean test-coverage build upload
+
+# Medical AI Integration Testing
+test-medical-integration:
+	@echo "🔬 Testing medical AI integration..."
+	uv run pytest tests/test_real_world_integration.py::test_diabetes_research_workflow -v -s
+
+test-real-world-integration:
+	@echo "🌍 Testing real-world integration..."
+	uv run pytest tests/test_real_world_integration.py -v
+
+test-cardiac-phenotypes:
+	@echo "❤️ Testing cardiac phenotype discovery..."
+	uv run pytest tests/test_real_world_integration.py::test_cardiac_phenotype_discovery -v -s
+
+test-cancer-research:
+	@echo "🎯 Testing cancer research workflow..."
+	uv run pytest tests/test_real_world_integration.py::test_cancer_relevancy_ranking -v -s
+
+test-cross-ontology:
+	@echo "🧠 Testing cross-ontology search..."
+	uv run pytest tests/test_real_world_integration.py::test_cross_ontology_brain_research -v -s
+
+test-clinical-workflow:
+	@echo "🏥 Testing clinical decision support..."
+	uv run pytest tests/test_real_world_integration.py::test_clinical_decision_support_workflow -v -s
+
+# Demo medical functionality  
+demo-medical:
+	@echo "🚀 OAK-MCP MEDICAL AI DEMO"
+	@echo "=========================="
+	uv run python -c "import asyncio; from oak_mcp.main import search; asyncio.run(search.fn('diabetes', 'mondo', 3))" | head -10
+	@echo ""
+	@echo "✅ Oak-MCP provides structured medical knowledge for AI agents!"
 
 # MCP Server testing
 test-mcp:
